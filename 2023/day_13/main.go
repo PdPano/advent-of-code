@@ -26,10 +26,13 @@ func main() {
 
 func part1(patterns [][]string) {
 	acc := 0
+    acc2:=0
 	for _, pattern := range patterns {
 		acc += scorePattern(pattern)
+        acc2 += 100*scorePatternWithError(pattern,0)+scorePatternWithError(transpose(pattern),0)
 	}
 	fmt.Println("Part1:", acc)
+	fmt.Println("Part1-v2:", acc2)
 }
 
 func part2(patterns [][]string) {
@@ -39,6 +42,12 @@ func part2(patterns [][]string) {
 		acc += scoreSmudge(pattern, origScore)
 	}
 	fmt.Println("Part2:", acc)
+
+    acc = 0
+    for _, pattern := range patterns {
+        acc += 100*scorePatternWithError(pattern, 1)+scorePatternWithError(transpose(pattern),1)
+    }
+    fmt.Println("Part2-2nd try:", acc)
 }
 
 func scoreSmudge(pattern []string, origScore int) int {
@@ -67,6 +76,33 @@ func scoreSmudge(pattern []string, origScore int) int {
 		}
 	}
 	return origScore
+}
+
+func scorePatternWithError(pattern []string, maxErrors int) int {
+	for partitionAt := 1; partitionAt < len(pattern); partitionAt++ {
+		errorCount := 0
+		for i := 0; i < partitionAt; i++ {
+			mirrorI := 2*partitionAt - i -1
+			if mirrorI >= len(pattern) || mirrorI < 0 {
+				continue
+			}
+			for j := 0; j < len(pattern[0]); j++ {
+				if pattern[i][j] != pattern[mirrorI][j] {
+					errorCount++
+				}
+                if(errorCount>maxErrors){
+                    break
+                }
+			}
+            if(errorCount>maxErrors){
+                break
+            }
+		}
+        if(errorCount==maxErrors){
+            return partitionAt
+        }
+	}
+	return 0
 }
 
 func scorePattern(pattern []string) int {
