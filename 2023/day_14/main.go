@@ -7,7 +7,7 @@ import (
 )
 
 func getInput() [][]byte {
-	file, _ := os.ReadFile("sample.txt")
+	file, _ := os.ReadFile("input1.txt")
 	srows := strings.Split(strings.TrimSpace(string(file)), "\n")
 	rows := make([][]byte, len(srows))
 	for i := 0; i < len(srows); i++ {
@@ -62,8 +62,6 @@ func part2(rows [][]byte){
         ms:=mapStr(rows)
         step, ok := seen[ms]
         if(ok){
-            fmt.Println("Saw configuration on step", step.step)
-            fmt.Println("Cycle length is", i-step.step)
             cycleLength=i-step.step
             currentStep=i
             break
@@ -72,11 +70,9 @@ func part2(rows [][]byte){
         }
         cycle(&rows)
     }
-    fmt.Println(currentStep)
-    fmt.Println(cycleLength)
     remaining := (1000000000-currentStep)%cycleLength
     for i:=0;i<remaining;i++{cycle(&rows)}
-    fmt.Println(scoreMap(rows))
+    fmt.Println("Part 2:", scoreMap(rows))
 }
 
 func cycle(rows *[][]byte){
